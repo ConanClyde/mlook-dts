@@ -22,7 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
         
         // Force HTTPS in production
         if (config('app.env') === 'production') {
-            $middleware->forceScheme('https');
+            // Use Laravel's HTTPS redirect middleware helper
+            $middleware->redirectToHttps();
         }
         
         $middleware->alias([
