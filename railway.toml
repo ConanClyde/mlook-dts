@@ -7,9 +7,8 @@ builder = "nixpacks"
 buildCommand = "composer install --no-dev --optimize-autoloader && npm ci && npm run build"
 
 [deploy]
-# Start command: Simple web server first (for debugging)
-# Once working, switch to: chmod +x start.sh && ./start.sh
-startCommand = "php artisan serve --host=0.0.0.0 --port=$PORT"
+# Start command: Run startup script (web + queue worker)
+startCommand = "chmod +x start.sh && ./start.sh"
 # Health check: Use Laravel's built-in /up endpoint (doesn't require database)
 healthcheckPath = "/up"
 healthcheckTimeout = 100
