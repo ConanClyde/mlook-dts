@@ -7,7 +7,8 @@ builder = "nixpacks"
 buildCommand = "composer install --no-dev --optimize-autoloader && npm ci && npm run build"
 
 [deploy]
-# Start command: Run startup script (web + queue worker)
+# Start command: Simple web server first (for debugging)
+# Use role-aware start script so multiple services can share the same config
 startCommand = "chmod +x start.sh && ./start.sh"
 # Health check: Use Laravel's built-in /up endpoint (doesn't require database)
 healthcheckPath = "/up"
