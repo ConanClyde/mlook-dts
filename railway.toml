@@ -1,11 +1,25 @@
+# Railway Configuration for MLOOK DTS
+# This file configures the main web service
+
 [build]
 builder = "nixpacks"
+# Build command: Install dependencies and build frontend assets
 buildCommand = "composer install --no-dev --optimize-autoloader && npm ci && npm run build"
 
 [deploy]
+# Start command: Run Laravel development server (for production, consider using PHP-FPM + Nginx)
 startCommand = "php artisan serve --host=0.0.0.0 --port=$PORT"
-healthcheckPath = "/"
+# Health check: Use Laravel's built-in /up endpoint (doesn't require database)
+healthcheckPath = "/up"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
+
+# IMPORTANT: Configure these in Railway UI:
+# 1. Pre-deploy Command (Settings → Deploy Hooks):
+#    php artisan migrate --force --seed && php artisan storage:link
+#
+# 2. Create separate services for:
+#    - Queue Worker: php artisan queue:work --tries=3 --timeout=90
+#    - Reverb WebSocket: php artisan reverb:start --host=0.0.0.0 --port=$PORT
 
