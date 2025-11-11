@@ -1,0 +1,22 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - config
+        - database
+        - routes
+
+    # Rule level (0-9, higher is stricter)
+    level: 5
+
+    ignoreErrors:
+        # Ignore errors in migrations
+        - '#Call to an undefined method Illuminate\\Database\\Schema\\Blueprint::#'
+        
+    excludePaths:
+        - ./*/*/FileToBeExcluded.php
+
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false

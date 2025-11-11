@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate PWA Icons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #f97316;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #f97316;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #ea580c;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate PWA Icons</h1>
+        <p>Click the button below to generate the required PWA icons (192x192 and 512x512).</p>
+        <button onclick="generateIcons()">Generate Icons</button>
+        <div id="status" class="status"></div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+        async function generateIcons() {
+            const sizes = [96, 192, 512];
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = 'Generating icons...<br>';
+            
+            for (const size of sizes) {
+                const canvas = document.getElementById('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                
+                // Draw background (orange #f97316)
+                ctx.fillStyle = '#f97316';
+                ctx.fillRect(0, 0, size, size);
+                
+                // Draw white circle in center
+                const centerX = size / 2;
+                const centerY = size / 2;
+                const radius = size * 0.35;
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Draw "DTS" text in orange
+                ctx.fillStyle = '#f97316';
+                ctx.font = `bold ${size / 4}px Arial, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('DTS', centerX, centerY);
+                
+                // Convert to blob
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, 'image/png');
+                });
+                
+                // Download the PNG file
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}x${size}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                statusDiv.innerHTML += `✓ Generated icon-${size}x${size}.png<br>`;
+            }
+            
+            setTimeout(() => {
+                statusDiv.innerHTML += '<br><strong>Done! If files were downloaded, please save them to the /public/images/ directory and refresh this page.</strong>';
+            }, 1000);
+        }
+        
+    </script>
+</body>
+</html>
+
