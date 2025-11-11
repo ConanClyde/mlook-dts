@@ -17,6 +17,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust Railway's proxy (all proxies in production)
+        $middleware->trustProxies(at: '*');
+        
+        // Force HTTPS in production
+        if (config('app.env') === 'production') {
+            $middleware->forceScheme('https');
+        }
+        
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'ip.whitelist' => \App\Http\Middleware\IpWhitelist::class,
