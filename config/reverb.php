@@ -77,8 +77,22 @@ return [
                 'secret' => env('REVERB_APP_SECRET'),
                 'app_id' => env('REVERB_APP_ID'),
                 'options' => [
-                    'host' => env('REVERB_HOST'),
-                    'port' => env('REVERB_PORT', 443),
+                    'host' => (function() {
+                        $host = env('REVERB_HOST');
+                        // Reject invalid values like 0.0.0.0 or ${PORT}
+                        if (empty($host) || $host === '0.0.0.0' || str_contains($host, '${')) {
+                            return '127.0.0.1'; // Fallback for invalid values
+                        }
+                        return $host;
+                    })(),
+                    'port' => (function() {
+                        $port = env('REVERB_PORT', 443);
+                        // Reject invalid values like ${PORT}
+                        if (str_contains((string) $port, '${')) {
+                            return 443; // Fallback for invalid values
+                        }
+                        return (int) $port;
+                    })(),
                     'scheme' => env('REVERB_SCHEME', 'https'),
                     'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
                 ],
