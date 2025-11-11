@@ -20,11 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust Railway's proxy (all proxies in production)
         $middleware->trustProxies(at: '*');
         
-        // Force HTTPS in production
-        if (config('app.env') === 'production') {
-            // Use Laravel's HTTPS redirect middleware helper
-            $middleware->redirectToHttps();
-        }
+       
         
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
